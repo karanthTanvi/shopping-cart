@@ -1,7 +1,9 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-require('dotenv').config(); // loads the MONGODB_URI and PORT from the .env file
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+require('dotenv').config(); // loads MONGODB_URI, PORT and JWT_SECRET from the .env file
 
 const app = express();
 
@@ -18,6 +20,14 @@ mongoose.connect(process.env.MONGODB_URI)
   .catch(err => console.error('Connection error:', err));
 
 // --- Schemas ---
+
+// defines the shape of a registered user
+const userSchema = new mongoose.Schema({
+  name: String,
+  email: { type: String, unique: true }, // email must be unique across all users
+  password: String,                      // stored as a bcrypt hash, never plain text
+  role: { type: String, default: 'user' }, // 'user' or 'admin' — controls access level
+});
 
 // defines the shape of a product stored in the database
 const productSchema = new mongoose.Schema({
@@ -40,8 +50,97 @@ const cartItemSchema = new mongoose.Schema({
   quantity: { type: Number, default: 1 },
 });
 
+const User = mongoose.model('User', userSchema);
 const Product = mongoose.model('Product', productSchema);
 const CartItem = mongoose.model('CartItem', cartItemSchema);
+
+// --- Auth Middleware ---
+
+// checks the request carries a valid JWT, and attaches the user info to req.user
+// any route that needs a logged-in user uses this
+function auth(req, res, next) {
+  // the token is sent in the Authorization header as "Bearer <token>"
+  const header = req.headers.authorization;
+  if (!header) return res.status(401).json({ error: 'No token provided' });
+
+  const token = header.split(' ')[1];
+  try {
+    // verify checks the token was signed by this server and has not expired
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded; // decoded contains { id, role }
+    next();
+  } catch (err) {
+    res.status(401).json({ error: 'Invalid or expired token' });
+  }
+}
+
+// only lets the request through if the logged-in user is an admin
+// must be used after auth, since it relies on req.user
+function adminOnly(req, res, next) {
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ error: 'Admin access required' });
+  }
+  next();
+}
+
+// --- Auth Routes ---
+
+// registers a new user
+// the password is hashed with bcrypt before being saved — the plain password is never stored
+app.post('/api/register', async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({ error: 'Name, email and password are required' });
+    }
+
+    // stop duplicate accounts on the same email
+    const existing = await User.findOne({ email });
+    if (existing) {
+      return res.status(400).json({ error: 'An account with this email already exists' });
+    }
+
+    // hash the password — 10 is the salt rounds, a standard cost factor
+    const hashed = await bcrypt.hash(password, 10);
+    const user = new User({ name, email, password: hashed });
+    await user.save();
+
+    res.json({ message: 'Account created — please log in' });
+  } catch (err) {
+    res.status(500).json({ error: 'Registration failed' });
+  }
+});
+
+// logs a user in
+// compares the submitted password against the stored hash, and returns a JWT on success
+app.post('/api/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ error: 'Invalid email or password' });
+
+    // bcrypt.compare safely checks the plain password against the stored hash
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) return res.status(400).json({ error: 'Invalid email or password' });
+
+    // the token carries the user id and role, and expires after 7 days
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    // send back the token plus basic user info the frontend needs to display
+    res.json({
+      token,
+      user: { id: user._id, name: user.name, email: user.email, role: user.role },
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Login failed' });
+  }
+});
 
 // --- Seed ---
 
