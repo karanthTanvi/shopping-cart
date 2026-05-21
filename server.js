@@ -43,6 +43,7 @@ const productSchema = new mongoose.Schema({
 
 // defines the shape of a cart item stored in the database
 const cartItemSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // which user owns this cart item
   productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' }, // links back to the product
   name: String,
   price: Number,    // price is copied at the time of adding to cart
@@ -187,32 +188,34 @@ app.get('/api/products', async (req, res) => {
   }
 });
 
-// --- Cart Routes ---
 
-// returns all items currently in the cart
-app.get('/api/cart', async (req, res) => {
+// --- Cart Routes ---
+// every cart route requires a logged-in user, and only ever touches that user's own items
+
+// returns the items in the logged-in user's cart
+app.get('/api/cart', auth, async (req, res) => {
   try {
-    const items = await CartItem.find();
+    const items = await CartItem.find({ userId: req.user.id });
     res.json(items);
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch cart' });
   }
 });
 
-// adds a product to the cart
-// if the product is already in the cart, increases the quantity instead of adding a duplicate
-app.post('/api/cart', async (req, res) => {
+// adds a product to the user's cart
+// if the product is already in their cart, increases the quantity instead of duplicating
+app.post('/api/cart', auth, async (req, res) => {
   try {
     const { productId, name, price, image } = req.body;
 
-    const existing = await CartItem.findOne({ productId });
+    const existing = await CartItem.findOne({ userId: req.user.id, productId });
     if (existing) {
       existing.quantity += 1;
       await existing.save();
       return res.json(existing);
     }
 
-    const item = new CartItem({ productId, name, price, image, quantity: 1 });
+    const item = new CartItem({ userId: req.user.id, productId, name, price, image, quantity: 1 });
     await item.save();
     res.json(item);
   } catch (err) {
@@ -220,21 +223,22 @@ app.post('/api/cart', async (req, res) => {
   }
 });
 
-// updates the quantity of a cart item
-// if the new quantity is 0 or less, the item is removed from the cart
-app.put('/api/cart/:id', async (req, res) => {
+// updates the quantity of a cart item the user owns
+// if the new quantity is 0 or less, the item is removed
+app.put('/api/cart/:id', auth, async (req, res) => {
   try {
     const { quantity } = req.body;
 
     if (quantity <= 0) {
-      await CartItem.findByIdAndDelete(req.params.id);
+      await CartItem.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
       return res.json({ deleted: true });
     }
 
-    const item = await CartItem.findByIdAndUpdate(
-      req.params.id,
+    // findOneAndUpdate with userId ensures a user can only edit their own items
+    const item = await CartItem.findOneAndUpdate(
+      { _id: req.params.id, userId: req.user.id },
       { quantity },
-      { new: true } // returns the updated document rather than the old one
+      { new: true }
     );
     res.json(item);
   } catch (err) {
@@ -242,20 +246,20 @@ app.put('/api/cart/:id', async (req, res) => {
   }
 });
 
-// removes a single item from the cart by its id
-app.delete('/api/cart/:id', async (req, res) => {
+// removes a single item from the user's cart
+app.delete('/api/cart/:id', auth, async (req, res) => {
   try {
-    await CartItem.findByIdAndDelete(req.params.id);
+    await CartItem.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
     res.json({ message: 'Item removed' });
   } catch (err) {
     res.status(500).json({ error: 'Failed to remove item' });
   }
 });
 
-// removes all items from the cart at once
-app.delete('/api/cart', async (req, res) => {
+// clears all items from the user's cart
+app.delete('/api/cart', auth, async (req, res) => {
   try {
-    await CartItem.deleteMany({});
+    await CartItem.deleteMany({ userId: req.user.id });
     res.json({ message: 'Cart cleared' });
   } catch (err) {
     res.status(500).json({ error: 'Failed to clear cart' });
