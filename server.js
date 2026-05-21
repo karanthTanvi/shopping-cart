@@ -266,6 +266,34 @@ app.delete('/api/cart', auth, async (req, res) => {
   }
 });
 
+// --- Admin Routes ---
+
+// returns every user's cart, grouped by user — admin only
+// fulfils the "admin can view all users' shopping carts" requirement
+app.get('/api/admin/carts', auth, adminOnly, async (req, res) => {
+  try {
+    const users = await User.find({ role: 'user' });
+    const allItems = await CartItem.find();
+
+    // build one entry per user, attaching that user's items and cart total
+    const result = users.map(u => {
+      const items = allItems.filter(i => String(i.userId) === String(u._id));
+      const total = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
+      return {
+        userId: u._id,
+        name: u.name,
+        email: u.email,
+        items,
+        total,
+      };
+    });
+
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch carts' });
+  }
+});
+
 // --- Start Server ---
 
 const PORT = process.env.PORT || 3000;
