@@ -147,6 +147,39 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
+// --- Profile Routes ---
+
+// lets a logged-in user change their own password
+// the current password must be verified before the new one is saved
+app.put('/api/profile/password', auth, async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ error: 'Both current and new password are required' });
+    }
+    if (newPassword.length < 6) {
+      return res.status(400).json({ error: 'New password must be at least 6 characters' });
+    }
+
+    // look up the logged-in user (their id comes from the verified token)
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    // verify the current password before allowing a change
+    const match = await bcrypt.compare(currentPassword, user.password);
+    if (!match) return res.status(400).json({ error: 'Current password is incorrect' });
+
+    // hash and save the new password — never store it in plain text
+    user.password = await bcrypt.hash(newPassword, 10);
+    await user.save();
+
+    res.json({ message: 'Password updated successfully' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to update password' });
+  }
+});
+
 // --- Seed ---
 
 // fills the database with products on first run

@@ -28,6 +28,9 @@ async function request(url, options = {}) {
 export const register = (body) => request('/api/register', { method: 'POST', body: JSON.stringify(body) });
 export const login = (body) => request('/api/login', { method: 'POST', body: JSON.stringify(body) });
 
+// --- profile ---
+export const changePassword = (body) => request('/api/profile/password', { method: 'PUT', body: JSON.stringify(body) });
+
 // --- products ---
 export const seed = () => request('/api/seed', { method: 'POST' });
 export const getProducts = () => request('/api/products');
