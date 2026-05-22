@@ -21,8 +21,8 @@ a { text-decoration: none; color: inherit; }
 
 /* ── NAVBAR ── */
 .navbar {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
   padding: 1.8rem 3rem;
   background: var(--bg);
@@ -31,16 +31,52 @@ a { text-decoration: none; color: inherit; }
   z-index: 100;
   border-bottom: 1px solid rgba(0,0,0,0.08);
 }
-.logo {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.8rem;
-  font-weight: 400;
-  letter-spacing: 0.4em;
-  text-align: center;
-}
 .nav-left { display: flex; align-items: center; }
-.nav-center { display: flex; align-items: center; justify-content: center; }
-.nav-right { display: flex; justify-content: flex-end; align-items: center; gap: 1.5rem; }
+.nav-right { display: flex; align-items: center; gap: 1.8rem; }
+
+.nav-search-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 200px;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(0,0,0,0.15);
+}
+.nav-search-wrap:focus-within { border-bottom-color: var(--dark); }
+
+.nav-search-icon {
+  flex-shrink: 0;
+  color: var(--mid);
+}
+
+.nav-search {
+  flex: 1;
+  width: 100%;
+  border: none;
+  background: none;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  color: var(--dark);
+  outline: none;
+  text-align: left;
+  text-transform: uppercase;
+}
+.nav-search::placeholder {
+  color: var(--light);
+  font-weight: 300;
+  letter-spacing: 0.12em;
+}
+.nav-search-clear {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.7rem;
+  color: var(--light);
+  padding: 0;
+}
+.nav-search-clear:hover { color: var(--dark); }
 
 .tab-bar {
   display: flex;
@@ -50,7 +86,7 @@ a { text-decoration: none; color: inherit; }
   border-bottom: 1px solid rgba(0,0,0,0.08);
   background: var(--bg);
   position: sticky;
-  top: 93px;
+  top: 89px;
   z-index: 99;
 }
 .tab-btn {
@@ -158,10 +194,11 @@ main { padding: 4rem 3rem; }
   color: var(--dark);
 }
 .product-price {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1rem;
-  color: var(--mid);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.78rem;
   font-weight: 400;
+  letter-spacing: 0.05em;
+  color: var(--dark);
 }
 
 /* ── DETAIL OVERLAY ── */
@@ -542,6 +579,15 @@ main { padding: 4rem 3rem; }
   text-align: right;
 }
 
+.admin-back {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  color: var(--mid);
+}
+.admin-back:hover { color: var(--gold); }
 /* ── TOAST ── */
 .toast {
   position: fixed;

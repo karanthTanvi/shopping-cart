@@ -1,0 +1,32 @@
+[
+  {
+    "_id": { "$oid": "6a0eea0f3955058d9fd7dfce" },
+    "userId": { "$oid": "6a0ee7903955058d9fd7df4d" },
+    "productId": { "$oid": "6a0ee4f13955058d9fd7deb0" },
+    "name": "NOEUD RING",
+    "price": 950,
+    "image": "/assets/r2.webp",
+    "quantity": 1,
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "6a0eea103955058d9fd7dfd2" },
+    "userId": { "$oid": "6a0ee7903955058d9fd7df4d" },
+    "productId": { "$oid": "6a0ee4f13955058d9fd7deb1" },
+    "name": "ECLAT RING",
+    "price": 1400,
+    "image": "/assets/r3.webp",
+    "quantity": 1,
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "6a0eea113955058d9fd7dfd6" },
+    "userId": { "$oid": "6a0ee7903955058d9fd7df4d" },
+    "productId": { "$oid": "6a0ee4f13955058d9fd7deb2" },
+    "name": "NUAGE RING",
+    "price": 870,
+    "image": "/assets/r4.webp",
+    "quantity": 1,
+    "__v": 0
+  }
+]

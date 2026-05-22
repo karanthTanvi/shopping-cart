@@ -1,0 +1,26 @@
+[
+  {
+    "_id": { "$oid": "6a0ee7903955058d9fd7df4d" },
+    "name": "user1",
+    "email": "user1@gmail.com",
+    "password": "$2b$10$qZ9DUWtlulvRIFmx.e2LTeCPlR3.CIHPXpS7jsaa0PSwT43Fwt9B6",
+    "role": "user",
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "6a0ee7c33955058d9fd7df5f" },
+    "name": "user2",
+    "email": "user2@gmail.com",
+    "password": "$2b$10$1QUziWpp2IodAINuzxM1j.AZN93bB4JsSWJN.VwgbOQeG1A.24tji",
+    "role": "user",
+    "__v": 0
+  },
+  {
+    "_id": { "$oid": "6a0ee92a3955058d9fd7df80" },
+    "name": "admin",
+    "email": "admin@aurel.com",
+    "password": "$2b$10$s4Q/qjFVUhSuyS/A86H/feCcGtynWf60lbvr0GjagFRkhwx5bc9mu",
+    "role": "admin",
+    "__v": 0
+  }
+]

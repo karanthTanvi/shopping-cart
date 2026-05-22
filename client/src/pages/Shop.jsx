@@ -15,6 +15,7 @@ export default function Shop() {
 
   const [products, setProducts] = useState([]);
   const [category, setCategory] = useState('all');
+  const [search, setSearch] = useState('');
   const [selected, setSelected] = useState(null); // product shown in the detail overlay
   const [cart, setCart] = useState([]);
   const [cartOpen, setCartOpen] = useState(false);
@@ -29,7 +30,7 @@ export default function Shop() {
       .catch(() => setError('Unable to load products. Please try again.'));
   }, []);
 
-// load the logged-in user's cart; runs when the user changes
+  // load the logged-in user's cart; runs when the user changes
   useEffect(() => {
     if (!user) return;
     let active = true; // guards against a stale response after logout
@@ -92,18 +93,31 @@ export default function Shop() {
     showToast('ORDER PLACED — THANK YOU FOR SHOPPING WITH AUREL');
   }
 
-  // filter the product list by the selected category
-  const visible = category === 'all'
-    ? products
-    : products.filter((p) => p.category === category);
+  // filter products by the selected category, then by the search text
+  const visible = products
+    .filter((p) => category === 'all' || p.category === category)
+    // match the search text against the START of any word in the product name
+.filter((p) => {
+  const term = search.toLowerCase().trim();
+  if (!term) return true; // empty search shows everything
+  return p.name
+    .toLowerCase()
+    .split(' ')                       // break the name into words
+    .some((word) => word.startsWith(term)); // keep it if any word starts with the term
+});
 
-// logged-out visitors always see an empty bag
+  // logged-out visitors always see an empty bag
   const displayCart = user ? cart : [];
   const cartCount = displayCart.reduce((sum, i) => sum + i.quantity, 0);
 
   return (
     <>
-      <Navbar cartCount={cartCount} onCartClick={() => setCartOpen(true)} />
+      <Navbar
+        cartCount={cartCount}
+        search={search}
+        onSearchChange={setSearch}
+        onCartClick={() => setCartOpen(true)}
+      />
       <TabBar active={category} onSelect={setCategory} />
 
       <main>
