@@ -14,7 +14,7 @@ AUREL is a single-page e-commerce application for a luxury jewellery brand. Visi
 
 ## Features
 - Single-page application — all interactions happen without page reloads
-- User registration and login, with passwords stored as secure bcrypt hashes
+- User registration, login and password change, with passwords stored as secure bcrypt hashes
 - JWT-based authentication, so a logged-in session survives a page refresh
 - Role-based access: a normal `user` role and an `admin` role
 - Admin panel where an admin can view every customer's shopping bag
