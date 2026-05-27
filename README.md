@@ -8,7 +8,7 @@ AUREL is a single-page e-commerce application for a luxury jewellery brand. Visi
 |---|---|
 | Frontend | React (Vite), React Router |
 | Backend | Node.js, Express |
-| Database | MongoDB Atlas (cloud-hosted) |
+| Database | MongoDB Atlas |
 | Authentication | JSON Web Tokens (JWT), bcrypt password hashing |
 | Fonts | Montserrat (Google Fonts) |
 
@@ -21,7 +21,7 @@ AUREL is a single-page e-commerce application for a luxury jewellery brand. Visi
 - 16 products across 4 categories: Rings, Earrings, Necklaces, Bracelets
 - Live search that filters products as the user types
 - Category filtering via a tab bar (Add-on feature)
-- Hover image swap on product cards
+- Hover image swap on product cards (Add-on feature)
 - Product detail overlay with material and reference information (Add-on feature)
 - Personal shopping bag: each user has their own cart, saved in the database
 - Bag controls: increase, decrease, or remove items
@@ -82,7 +82,7 @@ A copy of the database is included in the `database-export/` folder as `.json` f
 | GET | /api/admin/carts | view every customer's bag | admin only |
 
 ## How to Run
-The project has two parts — a backend and a frontend — and each needs its dependencies installed.
+The project has two parts: a backend and a frontend, and each needs its dependencies installed.
 
 1. Clone the repository.
 2. **Backend:** in the project's main folder, run `npm install`.
