@@ -3,16 +3,14 @@
 ## Overview
 AUREL is a single-page e-commerce application for a luxury jewellery brand. Visitors can browse a curated collection of fine jewellery and view detailed product information. Registered users can add pieces to a personal shopping bag, adjust quantities, and check out. An admin account can view the shopping bags of every customer.
 
-The app solves a common real-world problem: giving an online store a smooth, app-like shopping experience where browsing, searching, and managing a cart all happen on a single page without reloads, while keeping each user's data private and secure.
-
 ## Tech Stack
 | Layer | Technology |
 |---|---|
 | Frontend | React (Vite), React Router |
 | Backend | Node.js, Express |
-| Database | MongoDB Atlas (cloud-hosted), Mongoose |
+| Database | MongoDB Atlas (cloud-hosted) |
 | Authentication | JSON Web Tokens (JWT), bcrypt password hashing |
-| Fonts | Cormorant Garamond, Montserrat (Google Fonts) |
+| Fonts | Montserrat (Google Fonts) |
 
 ## Features
 - Single-page application — all interactions happen without page reloads
@@ -22,16 +20,16 @@ The app solves a common real-world problem: giving an online store a smooth, app
 - Admin panel where an admin can view every customer's shopping bag
 - 16 products across 4 categories: Rings, Earrings, Necklaces, Bracelets
 - Live search that filters products as the user types
-- Category filtering via a tab bar
+- Category filtering via a tab bar (Add-on feature)
 - Hover image swap on product cards
-- Product detail overlay with material and reference information
-- Personal shopping bag — each user has their own cart, saved in the database
-- Bag quantity controls: increase, decrease, or remove items
+- Product detail overlay with material and reference information (Add-on feature)
+- Personal shopping bag: each user has their own cart, saved in the database
+- Bag controls: increase, decrease, or remove items
 - Cart total calculated dynamically
 - Clear the entire bag, or check out to complete an order
 - Toast notifications for all actions
 - Responsive design for mobile, tablet, and desktop
-- Error handling — a clear message is shown if the server cannot be reached
+- Error handling: a clear message is shown when an error occurs
 
 ## CRUD Operations
 The app applies all four CRUD operations across three entities:
@@ -102,8 +100,8 @@ The `.env` file is not included in the repository for security reasons, so it mu
 To use the admin panel, register an account, then change that user's `role` field to `admin` in the database, and log in again.
 
 ## Challenges
-- Mapping CRUD operations onto an e-commerce context was not obvious at first. Working out, for example, that adding to the bag is a Create and changing a quantity is an Update took some thought.
-- Connecting MongoDB Atlas to the backend took time and a lot of reading to get right.
+- Coming from vanilla JavaScript, understanding the React project structure was 
+  challenging like components, pages, state, and routing were all new concepts to learn.
 - Adding authentication was new to me. Understanding how password hashing and JWT tokens work together, and how to protect routes so only logged-in users can reach them, was challenging.
 - A tricky bug appeared where products were seeded into the database twice. Tracking it down to React running its setup code twice in development, and fixing it with a unique database index, taught me a lot about how the frontend and database interact.
 

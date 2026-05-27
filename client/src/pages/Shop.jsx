@@ -97,14 +97,14 @@ export default function Shop() {
   const visible = products
     .filter((p) => category === 'all' || p.category === category)
     // match the search text against the START of any word in the product name
-.filter((p) => {
-  const term = search.toLowerCase().trim();
-  if (!term) return true; // empty search shows everything
-  return p.name
-    .toLowerCase()
-    .split(' ')                       // break the name into words
-    .some((word) => word.startsWith(term)); // keep it if any word starts with the term
-});
+    .filter((p) => {
+      const term = search.toLowerCase().trim();
+      if (!term) return true; // empty search shows everything
+      return p.name
+        .toLowerCase()
+        .split(' ')                       // break the name into words
+        .some((word) => word.startsWith(term)); // keep it if any word starts with the term
+    });
 
   // logged-out visitors always see an empty bag
   const displayCart = user ? cart : [];

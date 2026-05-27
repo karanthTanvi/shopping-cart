@@ -95,7 +95,7 @@ app.post('/api/register', async (req, res) => {
     if (!name || !email || !password) {
       return res.status(400).json({ error: 'Name, email and password are required' });
     }
-    // enforce a minimum password length on the server too — client checks can be bypassed
+    // enforce a minimum password length on the server too 
     if (password.length < 6) {
       return res.status(400).json({ error: 'Password must be at least 6 characters' });
     }
